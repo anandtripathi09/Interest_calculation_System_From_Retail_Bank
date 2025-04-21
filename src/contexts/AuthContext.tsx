@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config/constants';
 
 interface User {
@@ -32,11 +33,12 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkLoggedIn = async () => {
       const token = localStorage.getItem('token');
-      
+
       if (token) {
         try {
           const res = await axios.get(`${API_URL}/auth/user`, {
@@ -44,17 +46,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               Authorization: `Bearer ${token}`
             }
           });
-          
+
           setUser(res.data);
         } catch (err) {
           localStorage.removeItem('token');
           setUser(null);
         }
       }
-      
+
       setLoading(false);
     };
-    
+
     checkLoggedIn();
   }, []);
 
@@ -63,6 +65,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await axios.post(`${API_URL}/auth/login`, { email, password });
       localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
+
+      // Redirect based on role
+      navigate(res.data.user.role === 'admin' ? '/admin' : '/dashboard');
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Login failed');
     }
@@ -73,6 +78,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await axios.post(`${API_URL}/auth/register`, { name, email, password });
       localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
+
+      // Redirect to dashboard
+      navigate('/dashboard');
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Signup failed');
     }
