@@ -1,2 +1,1 @@
-// src/config/constants.ts
-export const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = "https://interest-calculation-system-from-retail-hv1p.onrender.com/api";
