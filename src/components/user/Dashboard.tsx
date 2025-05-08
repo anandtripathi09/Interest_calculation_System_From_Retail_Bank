@@ -40,6 +40,8 @@ const Dashboard: React.FC = () => {
           }
         });
         setUserData(response.data);
+        console.log(response.data);
+        
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch user data', error);
@@ -147,19 +149,19 @@ const Dashboard: React.FC = () => {
             <div className="space-y-4">
               {userData.recentTransactions.map((transaction) => (
                 <div key={transaction._id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                  <div className={`p-3 rounded-full mr-4 ${transaction.type === 'deposit' ? 'bg-green-100' : 'bg-red-100'}`}>
-                    {transaction.type === 'deposit' ? (
-                      <ArrowUpRight className={`h-6 w-6 ${transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'}`} />
+                  <div className={`p-3 rounded-full mr-4 ${transaction.type === 'withdraw' ? 'bg-red-100' : 'bg-green-100'}`}>
+                    {transaction.type === 'withdraw' ? (
+                      <ArrowDownRight className={'h-6 w-6 text-red-600'} />
                     ) : (
-                      <ArrowDownRight className={`h-6 w-6 ${transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'}`} />
+                      <ArrowUpRight className={'h-6 w-6 text-green-600'} />
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="text-sm font-medium text-gray-900">{transaction.description}</div>
                     <div className="text-xs text-gray-500">{formatDate(transaction.date)}</div>
                   </div>
-                  <div className={`text-sm font-semibold ${transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'}`}>
-                    {transaction.type === 'deposit' ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+                  <div className={`text-sm font-semibold ${transaction.type === 'withdraw' ? 'text-red-600' : 'text-green-600'}`}>
+                    {transaction.type === 'deposit' ? '-' : '+'}${Math.abs(transaction.amount).toFixed(2)}
                   </div>
                 </div>
               ))}
